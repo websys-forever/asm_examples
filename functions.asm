@@ -40,6 +40,21 @@ sprint:
     ret
 
 ;-------------------------
+; void sprintLF(string message)
+; String printing with line feed function
+sprintLF:
+    call sprint
+
+    push eax
+    mov  eax, 0Ah
+    push eax
+    mov  eax, esp
+    call sprint
+    pop  eax
+    pop  eax
+    ret
+
+;-------------------------
 ; void exit()
 ; Exit program and restore resources
 quit:
