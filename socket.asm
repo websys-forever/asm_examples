@@ -44,5 +44,15 @@ _listen:
     mov     eax, 102            ; invoke SYS_SOCKETCALL (kernel opcode 102)
     int     80h                 ; call the kernel
 
+_accept:
+
+    push    byte 0              ; push 0 dec onto stack (address length argument)
+    push    byte 0              ; push 0 dec onto stack (address argument)
+    push    edi                 ; push the file descriptor onto stack
+    mov     ecx, esp            ; move address of arguments into ecx
+    mov     ebx, 5              ; invoke subroutine ACCEPT (5)
+    mov     eax, 102            ; invoke SYS_SOCKETCALL (kernel opcode 102)
+    int     80h                 ; call the kernel
+
 _exit:
     call quit
