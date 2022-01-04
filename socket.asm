@@ -35,5 +35,14 @@ _bind:
     mov     eax, 102            ; invoke SYS_SOCKETCALL (kernel opcode 102)
     int     80h                 ; call the kernel
 
+_listen:
+
+    push    byte 1              ; move 1 onto stack (max queue length argument)
+    push    edi                 ; push the file descriptor onto stack
+    mov     ecx, esp            ; move address of arguments into ecx
+    mov     ebx, 4              ; invoke subroutine LISTEN (4)
+    mov     eax, 102            ; invoke SYS_SOCKETCALL (kernel opcode 102)
+    int     80h                 ; call the kernel
+
 _exit:
     call quit
