@@ -1,5 +1,8 @@
 %include 'functions.asm'
 
+section .bss
+buffer resb 255,
+
 section .text
 global _start
 
@@ -53,6 +56,28 @@ _accept:
     mov     ebx, 5              ; invoke subroutine ACCEPT (5)
     mov     eax, 102            ; invoke SYS_SOCKETCALL (kernel opcode 102)
     int     80h                 ; call the kernel
+
+_fork:
+
+    mov     esi, eax            ; move return value of SYS_SOCKETCALL into esi (file descriptor for accepted socket, or -1 on error)
+    mov     eax, 2              ; invoke SYS_FORK (kernel opcode 2)
+    int     80h                 ; call the kernel
+
+    cmp     eax, 0              ; if return value of SYS_FORK in eax is zero we are in the child process
+    jz      _read               ; jmp in child process to _read
+
+    jmp     _accept             ; jmp in parent process to _accept
+
+_read:
+
+    mov     edx, 255            ; number of bytes to read (we will only read the first 255 bytes for simplicity)
+    mov     ecx, buffer         ; move the memory address of our buffer variable into ecx
+    mov     ebx, esi            ; move esi into ebx (accepted socket file descriptor)
+    mov     eax, 3              ; invoke SYS_READ (kernel opcode 3)
+    int     80h                 ; call the kernel
+
+    mov     eax, buffer         ; move the memory address of our buffer variable into eax for printing
+    call    sprintLF            ; call our string printing function
 
 _exit:
     call quit
